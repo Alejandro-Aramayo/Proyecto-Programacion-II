@@ -1,4 +1,5 @@
 <footer th:fragment="footer-main">
-    <!-- anioActual lo aporta GlobalControllerAdvice: no hay que actualizar el año a mano -->
-    &copy; <span th:text="${anioActual}">2026</span> JTEducation
+    <!-- anioActual lo aporta GlobalControllerAdvice: no hay que actualizar el año a mano.
+         Las páginas que no pasan por un controlador nuestro (login fallido, error 403) usan el año del sistema. -->
+    &copy; <span th:text="${anioActual} ?: ${#temporals.year(#temporals.createNow())}">2026</span> JTEducation
 </footer>

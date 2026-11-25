@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,14 +9,17 @@
 <body>
     <header th:replace="fragments/header :: header-nav"></header>
 
+    <!-- La misma vista sirve para los dos roles: el administrador ve los botones de gestión,
+         y el alumno ve su ficha solo para consultar (SeguridadConfig no lo deja entrar a otras fichas) -->
     <main class="container">
-        <a class="volver" th:href="@{/alumnos}">&larr; Volver al listado</a>
+        <a class="volver" th:href="@{/alumnos}" sec:authorize="hasRole('ADMIN')">&larr; Volver al listado</a>
+        <p class="eyebrow" sec:authorize="hasRole('ALUMNO')">Mi ficha</p>
 
         <!-- Mensajes flash: por ejemplo, al volver de cargar notas -->
         <p th:if="${mensajeExito}" class="mensaje exito" th:text="${mensajeExito}"></p>
         <p th:if="${mensajeError}" class="mensaje error" th:text="${mensajeError}"></p>
 
-        <div class="acciones">
+        <div class="acciones" sec:authorize="hasRole('ADMIN')">
             <a class="btn" th:href="@{/alumnos/{id}/editar(id=${alumno.idAlumno})}">Editar alumno</a>
             <form method="post" th:action="@{/alumnos/{id}/eliminar(id=${alumno.idAlumno})}"
                   onsubmit="return confirm('¿Seguro que querés eliminar este alumno?');">
@@ -41,7 +44,10 @@
         <div class="tabla-wrapper" th:if="${!#lists.isEmpty(materias)}">
             <table>
                 <thead>
-                    <tr><th>Materia</th><th>1° nota</th><th>2° nota</th><th>Nota final</th><th></th></tr>
+                    <tr>
+                        <th>Materia</th><th>1° nota</th><th>2° nota</th><th>Nota final</th>
+                        <th sec:authorize="hasRole('ADMIN')"></th>
+                    </tr>
                 </thead>
                 <tbody>
                     <!-- "?." (navegación segura): si la materia no tiene notas, da null en vez de fallar, y "?:" muestra "-" -->
@@ -50,7 +56,8 @@
                         <td th:text="${fila.notas?.primerNota} ?: '-'">-</td>
                         <td th:text="${fila.notas?.segundaNota} ?: '-'">-</td>
                         <td th:text="${fila.notas?.notaFinal} ?: '-'">-</td>
-                        <td>
+                        <!-- Cargar notas es solo del administrador: el alumno solo las consulta -->
+                        <td sec:authorize="hasRole('ADMIN')">
                             <a class="btn"
                                th:href="@{/alumnos/{idA}/notas/{idM}(idA=${alumno.idAlumno}, idM=${fila.materia.idMateria})}"
                                th:text="${fila.notas != null} ? 'Editar notas' : 'Cargar notas'">Cargar notas</a>

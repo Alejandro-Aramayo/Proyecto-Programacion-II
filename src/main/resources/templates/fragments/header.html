@@ -1,11 +1,30 @@
-<header th:fragment="header-nav">
+<!-- sec:authorize (thymeleaf-extras-springsecurity6) muestra cada parte solo si el usuario cumple la condición.
+     Es solo para la interfaz: aunque alguien escriba la URL a mano, quien protege las páginas es SeguridadConfig. -->
+<header th:fragment="header-nav" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
     <a class="logo" th:href="@{/}"><img th:src="@{/images/logo.png}" alt="JTEducation" class="logo-img"></a>
-    <nav>
+
+    <nav sec:authorize="isAuthenticated()" aria-label="Menú principal">
         <ul>
-            <li><a th:href="@{/}">Inicio</a></li>
-            <li><a th:href="@{/alumnos}">Alumnos</a></li>
-            <li><a th:href="@{/materias}">Materias</a></li>
-            <li><a th:href="@{/cursos}">Cursos</a></li>
+            <!-- Administrador: todas las secciones de gestión -->
+            <li sec:authorize="hasRole('ADMIN')"><a th:href="@{/}">Inicio</a></li>
+            <li sec:authorize="hasRole('ADMIN')"><a th:href="@{/alumnos}">Alumnos</a></li>
+            <li sec:authorize="hasRole('ADMIN')"><a th:href="@{/materias}">Materias</a></li>
+            <li sec:authorize="hasRole('ADMIN')"><a th:href="@{/cursos}">Cursos</a></li>
+            <!-- Alumno: solo su ficha (el inicio lo redirige ahí) -->
+            <li sec:authorize="hasRole('ALUMNO')"><a th:href="@{/}">Mi ficha</a></li>
         </ul>
     </nav>
+
+    <!-- Quién está conectado y botón para cerrar la sesión -->
+    <div class="sesion" sec:authorize="isAuthenticated()">
+        <span class="sesion-usuario">
+            <span sec:authentication="name">usuario@mail.com</span>
+            <span class="sesion-rol" sec:authorize="hasRole('ADMIN')">Administrador</span>
+            <span class="sesion-rol" sec:authorize="hasRole('ALUMNO')">Alumno</span>
+        </span>
+        <!-- Cerrar sesión es un POST (con el token CSRF que agrega th:action), nunca un link -->
+        <form th:action="@{/logout}" method="post">
+            <button type="submit" class="btn-salir">Cerrar sesión</button>
+        </form>
+    </div>
 </header>

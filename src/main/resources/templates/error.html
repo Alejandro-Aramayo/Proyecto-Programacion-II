@@ -32,8 +32,11 @@
         <!-- Cualquier otro error: caja simple -->
         <div class="error-box" th:unless="${status == 404}">
             <p class="error-codigo" th:text="${status}">500</p>
-            <h1 th:text="${titulo} ?: 'Ocurrió un error'">Error</h1>
-            <p class="subtitulo" th:text="${mensaje} ?: 'No pudimos completar lo que pediste. Volvé a intentarlo más tarde.'">Mensaje</p>
+            <!-- 403: lo genera Spring Security cuando el usuario no tiene permiso (por ejemplo, un alumno
+                 que intenta abrir la ficha de otro o una página del administrador) -->
+            <h1 th:text="${titulo} ?: (${status == 403} ? 'Acceso denegado' : 'Ocurrió un error')">Error</h1>
+            <p class="subtitulo"
+               th:text="${mensaje} ?: (${status == 403} ? 'No tenés permiso para ver esta página.' : 'No pudimos completar lo que pediste. Volvé a intentarlo más tarde.')">Mensaje</p>
             <a class="btn" th:href="@{/}">Volver al inicio</a>
         </div>
     </main>

@@ -16,4 +16,7 @@ public interface AlumnoRepository extends JpaRepository<Alumno, Long> {
 
     // "curso.idCurso": navega la relación y filtra por el id del curso
     List<Alumno> findByCurso_IdCurso(Long idCurso, Sort orden);
+
+    // "usuario.id": el alumno que corresponde a una cuenta. Lo usa el login para saber qué ficha es la suya
+    Optional<Alumno> findByUsuario_Id(Long idUsuario);
 }

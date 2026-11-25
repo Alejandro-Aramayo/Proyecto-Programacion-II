@@ -1,6 +1,12 @@
 # Mapa del sitio
 
-Páginas de JTEducation y cómo se navega entre ellas. El menú superior (Inicio, Alumnos, Materias, Cursos) está en todas las páginas, así que desde cualquiera se puede ir a las secciones principales.
+Páginas de JTEducation y cómo se navega entre ellas.
+
+Para entrar hay que **iniciar sesión**. Lo que se ve después depende del rol (ver [Casos de uso](Casos%20de%20uso.md)):
+- **Administrador:** el menú superior (Inicio, Alumnos, Materias, Cursos) está en todas las páginas, así que desde cualquiera puede ir a las secciones principales.
+- **Alumno:** el menú solo tiene "Mi ficha". Al iniciar sesión va directo a su ficha, donde consulta sus materias y notas.
+
+Los dos ven arriba su email, su rol y el botón **Cerrar sesión**.
 
 > Si cambian las páginas o las rutas, hay que actualizar este documento.
 
@@ -10,7 +16,8 @@ Las flechas indican un link o botón de una página a otra. Las acciones que mod
 
 ```mermaid
 flowchart TD
-    MENU(["Menú superior<br/>(en todas las páginas)"])
+    LOGIN["Iniciar sesión<br/>/login"]
+    MENU(["Menú superior del administrador<br/>(en todas las páginas)"])
     INICIO["Inicio<br/>/"]
 
     subgraph Alumnos
@@ -32,6 +39,10 @@ flowchart TD
     end
 
     ERROR["Página de error<br/>(404, 409, 400, 500)"]
+
+    LOGIN -.->|"Entrar como administrador (POST)"| INICIO
+    LOGIN -.->|"Entrar como alumno (POST)"| AL_FICHA
+    MENU -.->|"Cerrar sesión (POST /logout)"| LOGIN
 
     MENU --> INICIO & AL_LISTA & CU_LISTA & MA_LISTA
 
@@ -61,11 +72,16 @@ Cualquier página puede terminar en la **página de error** si se pide algo que 
 
 ## Rutas
 
+Todas las rutas son **solo del administrador**, salvo las tres primeras (abiertas a los dos roles) y la ficha del alumno, que el alumno puede ver solo si es la suya. Sin sesión iniciada, cualquier ruta redirige a `/login`.
+
 | Página | Método y URL | Vista (`templates/`) | Qué hace |
 |---|---|---|---|
-| Inicio | `GET /` | `index.html` | Muestra los 6 últimos alumnos inscriptos. |
+| Login | `GET /login` | `login.html` | Formulario de email y contraseña. Muestra un aviso si los datos son incorrectos, si se cerró la sesión o si venció. |
+| Iniciar sesión | `POST /login` | redirige a `/` | Lo procesa Spring Security: compara la contraseña con el hash (BCrypt) y crea la sesión. |
+| Cerrar sesión | `POST /logout` | redirige a `/login?logout` | Invalida la sesión y borra la cookie `JSESSIONID`. |
+| Inicio | `GET /` | `index.html` | Administrador: muestra los 6 últimos alumnos inscriptos. Alumno: lo redirige a su ficha. |
 | Listado de alumnos | `GET /alumnos` | `alumnos/list.html` | Lista paginada (10 por página), ordenada por apellido y nombre. |
-| Ficha del alumno | `GET /alumnos/{id}` | `alumnos/detail.html` | Datos personales, domicilio, email y la tabla con las materias del curso y sus notas. |
+| Ficha del alumno | `GET /alumnos/{id}` | `alumnos/detail.html` | Datos personales, domicilio, email y la tabla con las materias del curso y sus notas. El alumno la ve sin los botones de gestión, y solo la suya (si pide otra, recibe un 403). |
 | Nuevo alumno | `GET /alumnos/nuevo` | `alumnos/form.html` | Formulario vacío. |
 | Crear alumno | `POST /alumnos` | redirige a `/alumnos` | Crea el usuario (contraseña con BCrypt), el domicilio y el alumno. |
 | Editar alumno | `GET /alumnos/{id}/editar` | `alumnos/form.html` | Formulario con los datos actuales. |
@@ -86,6 +102,6 @@ Cualquier página puede terminar en la **página de error** si se pide algo que 
 | Editar materia | `GET /materias/{id}/editar` | `materias/form.html` | Formulario con el nombre actual. |
 | Actualizar materia | `POST /materias/{id}` | redirige a `/materias` | Misma regla de nombre único. |
 | Eliminar materia | `POST /materias/{id}/eliminar` | redirige a `/materias` | No permite eliminar una materia asignada a un curso o con notas. |
-| Error | (cualquier ruta) | `error.html` | Página de error con el diseño del sitio. |
+| Error | (cualquier ruta) | `error.html` | Página de error con el diseño del sitio. El 403 ("Acceso denegado") aparece cuando un usuario intenta entrar a una página que su rol no permite. |
 
 Las rutas que modifican datos usan `POST` y nunca `GET`: un link o una recarga de página no deben poder borrar ni cambiar nada. Después de cada `POST` exitoso se redirige (patrón *Post/Redirect/Get*) para que al refrescar no se reenvíe el formulario.

@@ -1,0 +1,104 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 720" width="1000" height="720" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif">
+  <title>JTEducation - Diagrama UML de casos de uso</title>
+  <defs>
+    <!-- Punta abierta para «include» y «extend» -->
+    <marker id="punta" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10" fill="none" stroke="#1e3a5f" stroke-width="1.5"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="1000" height="720" fill="#ffffff"/>
+
+  <!-- Límite del sistema -->
+  <rect x="210" y="30" width="590" height="665" rx="10" fill="#fbfcfe" stroke="#1e3a5f" stroke-width="2"/>
+  <text x="505" y="60" text-anchor="middle" font-size="18" font-weight="bold" fill="#1e3a5f">Sistema JTEducation</text>
+
+  <!-- ===== Asociaciones: Alumno (usuario final) ===== -->
+  <g stroke="#444" stroke-width="1.5">
+    <line x1="129" y1="285" x2="302" y2="114"/>
+    <line x1="129" y1="285" x2="302" y2="192"/>
+    <line x1="129" y1="285" x2="300" y2="285"/>
+  </g>
+
+  <!-- ===== Asociaciones: Administrador ===== -->
+  <g stroke="#444" stroke-width="1.5">
+    <line x1="881" y1="350" x2="518" y2="114"/>
+    <line x1="881" y1="350" x2="518" y2="194"/>
+    <line x1="881" y1="350" x2="520" y2="287"/>
+    <line x1="881" y1="350" x2="520" y2="395"/>
+    <line x1="881" y1="350" x2="760" y2="475"/>
+    <line x1="881" y1="350" x2="760" y2="560"/>
+    <line x1="881" y1="350" x2="760" y2="640"/>
+  </g>
+
+  <!-- ===== Casos de uso ===== -->
+  <g fill="#eef3fa" stroke="#1e3a5f" stroke-width="2">
+    <ellipse cx="410" cy="110" rx="110" ry="30"/>
+    <ellipse cx="410" cy="190" rx="110" ry="30"/>
+    <ellipse cx="410" cy="285" rx="110" ry="34"/>
+    <ellipse cx="410" cy="395" rx="110" ry="30"/>
+    <ellipse cx="410" cy="610" rx="110" ry="34"/>
+    <ellipse cx="655" cy="475" rx="105" ry="30"/>
+    <ellipse cx="655" cy="560" rx="105" ry="30"/>
+    <ellipse cx="655" cy="640" rx="105" ry="34"/>
+  </g>
+  <g font-size="14" fill="#1e3a5f" text-anchor="middle">
+    <text x="410" y="115">Iniciar sesión</text>
+    <text x="410" y="195">Cerrar sesión</text>
+    <text x="410" y="281">Consultar ficha de un alumno<tspan x="410" dy="18">(datos, materias y notas)</tspan></text>
+    <text x="410" y="400">Cargar / editar notas</text>
+    <text x="410" y="606">Crear cuenta de acceso<tspan x="410" dy="18">(contraseña con BCrypt)</tspan></text>
+    <text x="655" y="472">Gestionar alumnos<tspan x="655" dy="17" font-size="12">(alta, consulta, edición, baja)</tspan></text>
+    <text x="655" y="565">Gestionar materias</text>
+    <text x="655" y="636">Gestionar cursos<tspan x="655" dy="18">y su plan de materias</tspan></text>
+  </g>
+
+  <!-- ===== «extend» y «include» ===== -->
+  <g stroke="#1e3a5f" stroke-width="1.5" stroke-dasharray="7 5" fill="none">
+    <!-- Cargar notas extiende la consulta de la ficha (se hace desde el botón de cada materia) -->
+    <line x1="410" y1="365" x2="410" y2="321" marker-end="url(#punta)"/>
+    <!-- El alta de un alumno siempre incluye crear su cuenta de usuario -->
+    <line x1="578" y1="497" x2="490" y2="583" marker-end="url(#punta)"/>
+  </g>
+  <g font-size="13" fill="#1e3a5f" font-style="italic">
+    <text x="420" y="348">«extend»</text>
+    <text x="545" y="552" text-anchor="end">«include»</text>
+  </g>
+
+  <!-- ===== Actores ===== -->
+  <g stroke="#1e3a5f" stroke-width="2.5" fill="none" stroke-linecap="round">
+    <!-- Alumno -->
+    <circle cx="105" cy="249" r="14" fill="#ffffff"/>
+    <line x1="105" y1="263" x2="105" y2="310"/>
+    <line x1="83" y1="280" x2="127" y2="280"/>
+    <line x1="105" y1="310" x2="87" y2="340"/>
+    <line x1="105" y1="310" x2="123" y2="340"/>
+    <!-- Administrador -->
+    <circle cx="905" cy="314" r="14" fill="#ffffff"/>
+    <line x1="905" y1="328" x2="905" y2="375"/>
+    <line x1="883" y1="345" x2="927" y2="345"/>
+    <line x1="905" y1="375" x2="887" y2="405"/>
+    <line x1="905" y1="375" x2="923" y2="405"/>
+  </g>
+  <g font-size="15" font-weight="bold" fill="#1e3a5f" text-anchor="middle">
+    <text x="105" y="364">Alumno</text>
+    <text x="905" y="429">Administrador</text>
+  </g>
+  <g font-size="12" fill="#555" text-anchor="middle">
+    <text x="105" y="381">(usuario final)</text>
+  </g>
+
+  <!-- ===== Nota con la restricción del rol Alumno ===== -->
+  <line x1="110" y1="470" x2="318" y2="302" stroke="#777" stroke-width="1.2" stroke-dasharray="4 4"/>
+  <path d="M20,470 H180 L195,485 V620 H20 Z" fill="#fff8db" stroke="#9a7b00" stroke-width="1.5"/>
+  <path d="M180,470 V485 H195" fill="none" stroke="#9a7b00" stroke-width="1.5"/>
+  <g font-size="12.5" fill="#4a3b00">
+    <text x="30" y="494" font-weight="bold">Restricción</text>
+    <text x="30" y="514">El alumno solo puede</text>
+    <text x="30" y="531">consultar SU propia</text>
+    <text x="30" y="548">ficha, sin modificarla.</text>
+    <text x="30" y="571">Todo caso de uso,</text>
+    <text x="30" y="588">salvo iniciar sesión,</text>
+    <text x="30" y="605">requiere sesión activa.</text>
+  </g>
+</svg>
